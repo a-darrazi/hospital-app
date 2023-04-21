@@ -36,7 +36,12 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public Page<Patient> consulterPatient(int page, int size) {
+    public Page<Patient> consulterPatients(String key, int page, int size) {
+        return patientRepository.findByName(key,PageRequest.of(page, size));
+    }
+
+    @Override
+    public Page<Patient> consulterPatients(int page, int size) {
         return patientRepository.findAll(PageRequest.of(page, size));
     }
 

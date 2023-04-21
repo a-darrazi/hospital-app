@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       layout:decorate="~{layout.html}"
     >
 <head>
@@ -11,8 +12,18 @@
 
     <main class="container my-4" layout:fragment="content">
         <div class="card">
-            <h5 class="card-header">
-                <a th:href="@{/patient}" class="btn btn-sm btn-primary">ajouter patient</a>
+            <h5 class="card-header d-flex justify-content-between align-items-center">
+                <form th:action="@{/home(search=${search},page=${currentPage},size=${currentSize})}" class="d-flex" role="search">
+                    <input class="form-control form-control-sm me-2" name="search" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-sm btn-outline-success" type="submit">Search</button>
+                </form>
+                <div>
+                    <p class="m-0">
+                        Size: <span th:text="${currentSize}" class="text-danger"></span>
+                        - Total Pages: <span th:text="${totalPages}" class="text-danger"></span>
+                    </p>
+                </div>
+                <a th:href="@{/patient}" sec:authorize='hasAuthority("admin")' class="btn btn-sm btn-primary">ajouter patient</a>
             </h5>
             <div class="card-body">
                 <h5 class="card-title">patients</h5>
@@ -42,8 +53,36 @@
                     </tbody>
                 </table>
             </div>
+            <div class="card-footer d-flex justify-content-center">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination m-0">
+                        <li class="page-item" th:classappend="${isFirstPage}?disabled:''">
+                            <a class="page-link" th:href="@{/home(search=${search},page=${1},size=${currentSize})}">First Page</a>
+                        </li>
+                        <li class="page-item" th:classappend="${isFirstPage}?disabled:''">
+                            <a class="page-link" th:href="@{/home(search=${search},page=${currentPage},size=${currentSize})}"><span aria-hidden="true">&laquo;</span></a>
+                        </li>
+                        <li class="page-item" th:each="v,state : ${totalPagesArr}" th:classappend="${state.index==currentPage}?active:''"
+                            th:if="${state.index==currentPage} or
+                               ${state.index==currentPage+1} or
+                               ${state.index==currentPage -1} or
+                              (${state.first} and ${state.index+2>currentPage}) or
+                              (${state.last} and ${state.index -2<currentPage})">
+                            <a class="page-link" th:href="@{/home(search=${search},page=${state.count},size=${currentSize})}" th:text="${state.count}"></a>
+                        </li>
+                        <li class="page-item" th:class="${isLastPage} ? disabled : '' ">
+                            <a class="page-link" th:href="@{/home(search=${search},page=${currentPage +2},size=${currentSize})}"><span aria-hidden="true">&raquo;</span></a>
+                        </li>
+                        <li class="page-item" th:classappend="${isLastPage}?disabled:''">
+                            <a class="page-link" th:href="@{/home(search=${search},page=${totalPages},size=${currentSize})}">Last Page</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
         </div>
     </main>
+
+
 
 </body>
 </html>

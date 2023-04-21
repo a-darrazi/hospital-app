@@ -12,7 +12,7 @@
 <body>
 <main class="container my-4" layout:fragment="content">
     <div class="card">
-        <h5 class="card-header">update patient</h5>
+        <h5 class="card-header">ajouter patient</h5>
         <div class="card-body">
             <form th:action="@{/addPatient}" method="post" th:object="${patient}">
                 <div class="mb-3">
@@ -21,14 +21,17 @@
                 <div class="mb-3">
                     <label for="patientNom" class="form-label">Nom</label>
                     <input type="text" class="form-control" id="patientNom" th:field="*{nom}">
+                    <div class="text-danger" th:errors="${patient.nom}"></div>
                 </div>
                 <div class="mb-3">
                     <label for="patientBirthDate" class="form-label">Date Naissance</label>
                     <input type="date" class="form-control" id="patientBirthDate" th:field="*{dateNaissance}">
+                    <div class="text-danger" th:errors="${patient.dateNaissance}"></div>
                 </div>
                 <div class="mb-3">
                     <label for="patientScore" class="form-label">Score</label>
                     <input type="number" class="form-control" id="patientScore" th:field="*{score}">
+                    <div class="text-danger" th:errors="${patient.score}"></div>
                 </div>
                 <div class="mb-3 form-check">
                     <input type="checkbox" class="form-check-input" id="isMalade" th:field="*{malade}">

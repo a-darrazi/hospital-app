@@ -10,7 +10,8 @@ public interface PatientService {
     Patient ajouterPatient(Patient patient);
     Patient consulterPatient(Long id);
     List<Patient> consulterPatients();
-    Page<Patient> consulterPatient(int page, int size);
+    Page<Patient> consulterPatients(String key, int page, int size);
+    Page<Patient> consulterPatients(int page, int size);
     Patient modifierPatient(Patient patient);
     void supprimerPatient(Long id);
 

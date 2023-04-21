@@ -1,11 +1,14 @@
 package ma.enset.web;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ma.enset.model.Patient;
 import ma.enset.service.PatientService;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,9 +26,20 @@ public class PatientController {
     }
 
     @GetMapping("/home")
-    public String home(Model model){
-        List<Patient> patients = patientService.consulterPatients();
-        model.addAttribute("patients", patients);
+    public String home(Model model,
+                       @RequestParam(name="search",required = false, defaultValue = "") String search,
+                       @RequestParam(name = "page",required = false, defaultValue = "1") int page,
+                       @RequestParam(name="size",required = false, defaultValue = "5") int size){
+        page = page > 0 ? --page:0;
+        Page<Patient> patients = patientService.consulterPatients(search, page, size);
+        model.addAttribute("patients", patients.stream().toList());
+        model.addAttribute("search", search);
+        model.addAttribute("totalPagesArr",new int[patients.getTotalPages()]);
+        model.addAttribute("totalPages",patients.getTotalPages());
+        model.addAttribute("currentPage",page);
+        model.addAttribute("currentSize",size);
+        model.addAttribute("isFirstPage",patients.isFirst());
+        model.addAttribute("isLastPage",patients.isLast());
         return "index";
     }
 
@@ -36,8 +50,11 @@ public class PatientController {
     }
 
     @PostMapping("/addPatient")
-    public String addPatient(Model model,Patient patient){
-        model.addAttribute("patient", new Patient());
+    public String addPatient(Model model, @Valid Patient patient, BindingResult bindingResult){
+        model.addAttribute("patient", patient);
+        if(bindingResult.hasErrors()){
+            return "addPatient";
+        }
         patientService.ajouterPatient(patient);
         return "redirect:/home";
     }
@@ -50,7 +67,10 @@ public class PatientController {
     }
 
     @PostMapping("/updatePatient")
-    public String updatePatient(Patient patient){
+    public String updatePatient(@Valid Patient patient, BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            return "addPatient";
+        }
         patientService.modifierPatient(patient);
         return "redirect:/home";
     }

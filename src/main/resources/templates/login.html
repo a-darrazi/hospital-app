@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout.html}"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<main class="container m-5 mx-auto" layout:fragment="content">
+    <div class="alert alert-danger text-center" th:if="${param.error}">Wrong credentials!</div>
+    <div class="alert alert-info text-center">
+      In Memory Users: {
+        username: user,
+        password: 1234
+      },
+      admin: {
+        username: admin,
+        password: admin
+      }
+    </div>
+    <div class="card w-50 mx-auto">
+      <div class="card-header text-center bg-danger text-white">
+        Login
+      </div>
+      <div class="card-body">
+        <form th:action="@{/sign-in}" method="post">
+          <div class="mb-3">
+            <label for="username" class="form-label">Email address</label>
+            <input type="text" class="form-control" id="username" name="username">
+          </div>
+          <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control" id="password" name="password">
+          </div>
+          <div class="text-center">
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+</main>
+
+
+</body>
+</html>
